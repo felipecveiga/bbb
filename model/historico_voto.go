@@ -1,10 +1,12 @@
 package model
 
-import "time"
+import (
+	"time"
+)
 
 type HistoricoVoto struct {
-	ID             string    `json:"id"`
-	IdParticipante string    `json:"id_participante"`
-	Ip             string    `json:"ip"`
-	Created_at     time.Time `json:"created_at"`
+	ID             int       `json:"id" gorm:"AUTO_INCREMENT:primaryKey"`
+	IdParticipante int       `json:"id_participante"`
+	Ip             string    `json:"ip" gorm:"type:varchar(39);"`
+	Created_at     time.Time `json:"created_at" gorm:"default:CURRENT_TIMESTAMP"`
 }
