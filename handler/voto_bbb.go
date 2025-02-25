@@ -21,13 +21,18 @@ func NewHandler(s *service.Service) *Handler {
 func (h *Handler) RegistrarVoto(c echo.Context) error {
 
 	voto := new(model.HistoricoVoto)
+
 	if err := c.Bind(voto); err != nil {
 		return c.JSON(http.StatusBadRequest, map[string]string{"error": err.Error()})
 	}
 
+	if voto.IdParticipante == 0 {
+		return c.JSON(http.StatusBadRequest, map[string]string{"error": "id participante inválido"})
+	}
+
 	err := h.Service.CreateVoto(voto)
 	if err != nil {
-		return c.JSON(http.StatusConflict, map[string]string{"error": err.Error()})
+		return c.JSON(http.StatusInternalServerError, map[string]string{"error": err.Error()})
 	}
 
 	return c.JSON(http.StatusOK, voto)
