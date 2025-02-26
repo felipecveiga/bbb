@@ -27,10 +27,11 @@ func (r *Repository) StatusParticipante(idParticipante int) (*model.Participante
 
 	err := r.DB.Model(&model.Participante{}).
 		Select("status").
-		Where("id = ? AND status = ?", idParticipante, true).
+		Where("id = ?", idParticipante).
 		First(&participante).Error
+
 	if err != nil {
-		return nil, errors.New("erro ao buscar status do participante")
+		return nil, errors.New("erro na consulta do banco de dados")
 	}
 
 	return &participante, nil

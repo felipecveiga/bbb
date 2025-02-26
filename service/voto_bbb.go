@@ -20,17 +20,11 @@ func NewService(r *repository.Repository) *Service {
 
 func (s *Service) CreateVoto(voto *model.HistoricoVoto) error {
 
-	if voto.IdParticipante == 0 {
-		return errors.New("dados inválido")
-	}
-
 	isValido, err := s.Repository.StatusParticipante(voto.IdParticipante)
 	if err != nil {
-		return fmt.Errorf("erro ao verificar status do participante: %w", err)
+		return fmt.Errorf("erro: ao consultar status: %w", err)
 	}
-	if isValido == nil {
-		return errors.New("participante não encontrado")
-	}
+
 	if !isValido.Status {
 		return errors.New("participante não está ativo")
 	}
