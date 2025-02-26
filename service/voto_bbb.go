@@ -37,9 +37,17 @@ func (s *Service) CreateVoto(voto *model.HistoricoVoto) error {
 	return nil
 }
 
-/*
-func (s *Service) GetAllVotos() error {}
+func (s *Service) GetAllVotos(participanteId int) (int64, error) {
 
+	totalVotos, err := s.Repository.VotosParticipantes(participanteId)
+	if err != nil {
+		return 0, fmt.Errorf("erro ao consultar total de votos: %w", err)
+	}
+
+	return totalVotos, nil
+}
+
+/*
 func (s *Service) GetVoto() error {}
 
 func (s *Service) GetVotoHora() error {}

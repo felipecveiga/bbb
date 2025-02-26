@@ -2,6 +2,7 @@ package handler
 
 import (
 	"net/http"
+	"strconv"
 
 	"github.com/felipecveiga/bbb/model"
 	"github.com/felipecveiga/bbb/service"
@@ -40,11 +41,26 @@ func (h *Handler) RegistrarVoto(c echo.Context) error {
 
 func (h *Handler) ObterTotalVotos(c echo.Context) error {
 
-	return c.JSON(200, "")
+	return c.JSON(http.StatusOK, "")
 }
 
 func (h *Handler) ObterVotosPorParticipante(c echo.Context) error {
-	return c.JSON(200, "")
+
+	participanteId, err := strconv.Atoi(c.Param("id"))
+	if err != nil {
+		return c.JSON(http.StatusBadRequest, map[string]string{"error": "id inválido"})
+	}
+
+	if participanteId <= 0 {
+		return c.JSON(http.StatusBadRequest, map[string]string{"error": "id participante inválido"})
+	}
+
+	votosParticipantes, err := h.Service.GetAllVotos(participanteId)
+	if err != nil {
+		return c.JSON(http.StatusInternalServerError, map[string]string{"error": err.Error()})
+	}
+
+	return c.JSON(http.StatusOK, votosParticipantes)
 }
 
 func (h *Handler) ObterVotosPorHora(c echo.Context) error {
