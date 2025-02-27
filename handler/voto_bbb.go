@@ -41,7 +41,12 @@ func (h *Handler) RegistrarVoto(c echo.Context) error {
 
 func (h *Handler) ObterTotalVotos(c echo.Context) error {
 
-	return c.JSON(http.StatusOK, "")
+	votos, err := h.Service.GetAllVotos()
+	if err != nil {
+		return c.JSON(http.StatusInternalServerError, map[string]string{"error": err.Error()})
+	}
+
+	return c.JSON(http.StatusOK, votos)
 }
 
 func (h *Handler) ObterVotosPorParticipante(c echo.Context) error {
@@ -55,7 +60,7 @@ func (h *Handler) ObterVotosPorParticipante(c echo.Context) error {
 		return c.JSON(http.StatusBadRequest, map[string]string{"error": "id participante inválido"})
 	}
 
-	votosParticipantes, err := h.Service.GetAllVotos(participanteId)
+	votosParticipantes, err := h.Service.GetVoto(participanteId)
 	if err != nil {
 		return c.JSON(http.StatusInternalServerError, map[string]string{"error": err.Error()})
 	}

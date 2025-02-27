@@ -37,6 +37,20 @@ func (r *Repository) StatusParticipante(idParticipante int) (*model.Participante
 	return &participante, nil
 }
 
+func (r *Repository) GetAllVotosFromDB() (int64, error) {
+	
+	var votos int64
+
+	err := r.DB.Model(&model.HistoricoVoto{}).
+		Count(&votos).Error
+
+	if err != nil {
+		return 0, errors.New("erro na consulta do banco de dados")
+	}
+
+	return votos, nil
+}
+
 func (r *Repository) VotosParticipantes(participanteId int) (int64, error) {
 
 	var votos int64

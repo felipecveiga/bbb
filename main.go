@@ -17,6 +17,7 @@ func main() {
 	e := echo.New()
 	e.POST("/votar", HandlerHistoricoVoto.RegistrarVoto)
 	e.GET("/votos/:id", HandlerHistoricoVoto.ObterVotosPorParticipante)
+	e.GET("/votos", HandlerHistoricoVoto.ObterTotalVotos)
 
 	e.Logger.Fatal(e.Start(":8080"))
 }
