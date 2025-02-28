@@ -69,5 +69,11 @@ func (h *Handler) ObterVotosPorParticipante(c echo.Context) error {
 }
 
 func (h *Handler) ObterVotosPorHora(c echo.Context) error {
-	return c.JSON(200, "")
+
+	votos, err := h.Service.GetVotoHora()
+	if err != nil {
+		return c.JSON(http.StatusInternalServerError, map[string]string{"error": err.Error()})
+	}
+
+	return c.JSON(http.StatusOK, votos)
 }

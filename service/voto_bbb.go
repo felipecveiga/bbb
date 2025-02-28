@@ -48,14 +48,19 @@ func (s *Service) GetVoto(participanteId int) (int64, error) {
 }
 
 func (s *Service) GetAllVotos() (int64, error) {
-	
+
 	votos, err := s.Repository.GetAllVotosFromDB()
 	if err != nil {
-        return 0,  fmt.Errorf("erro ao consultar todos os votos: %w", err)
-    }
+		return 0, fmt.Errorf("erro ao consultar todos os votos: %w", err)
+	}
 	return votos, nil
 }
 
-/*
-func (s *Service) GetVotoHora() error {}
-*/
+func (s *Service) GetVotoHora() (map[string]int, error) {
+
+	votosHora, err := s.Repository.GetAllVotosPorHoraFromDB()
+	if err != nil {
+		return nil, fmt.Errorf("Erro ao consultar votos por hora: %w", err)
+	}
+	return votosHora, nil
+}
