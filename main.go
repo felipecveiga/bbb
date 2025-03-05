@@ -15,7 +15,7 @@ func main() {
 	HandlerHistoricoVoto := handler.NewHandler(ServiceHistoricoVoto)
 
 	e := echo.New()
-	e.POST("/votar", HandlerHistoricoVoto.RegistrarVoto)
+	e.POST("/votar", HandlerHistoricoVoto.Votar)
 	e.GET("/votos/:id", HandlerHistoricoVoto.ObterVotosPorParticipante)
 	e.GET("/votos", HandlerHistoricoVoto.ObterTotalVotos)
 	e.GET("/votos/hora", HandlerHistoricoVoto.ObterVotosPorHora)

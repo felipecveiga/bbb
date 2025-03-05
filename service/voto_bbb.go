@@ -37,30 +37,40 @@ func (s *Service) CreateVoto(voto *model.HistoricoVoto) error {
 	return nil
 }
 
-func (s *Service) GetVoto(participanteId int) (int64, error) {
+func (s *Service) GetAllVotos() (int64, error) {
 
-	totalVotos, err := s.Repository.VotosParticipantes(participanteId)
+	totalVotos, err := s.Repository.GetAllVotosFromDB()
 	if err != nil {
-		return 0, fmt.Errorf("erro ao consultar total de votos: %w", err)
+		return 0, fmt.Errorf("erro ao consultar todos os votos: %w", err)
 	}
 
 	return totalVotos, nil
 }
 
-func (s *Service) GetAllVotos() (int64, error) {
+func (s *Service) GetVoto(participanteId int) (int64, error) {
 
-	votos, err := s.Repository.GetAllVotosFromDB()
+	isValido, err := s.Repository.StatusParticipante(participanteId)
 	if err != nil {
-		return 0, fmt.Errorf("erro ao consultar todos os votos: %w", err)
+		return 0, fmt.Errorf("erro: ao consultar status: %w", err)
 	}
-	return votos, nil
+
+	if !isValido.Status {
+		return 0, errors.New("participante não está ativo")
+	}
+
+	votosParticipantes, err := s.Repository.GetVotosByIDFromDB(participanteId)
+	if err != nil {
+		return 0, fmt.Errorf("erro ao consultar total de votos: %w", err)
+	}
+
+	return votosParticipantes, nil
 }
 
 func (s *Service) GetVotoHora() (map[string]int, error) {
 
-	votosHora, err := s.Repository.GetAllVotosPorHoraFromDB()
+	votosHora, err := s.Repository.GetAllVotosHoraFromDB()
 	if err != nil {
-		return nil, fmt.Errorf("Erro ao consultar votos por hora: %w", err)
+		return nil, fmt.Errorf("erro ao consultar votos por hora: %w", err)
 	}
 	return votosHora, nil
 }

@@ -19,7 +19,7 @@ func NewHandler(s *service.Service) *Handler {
 	}
 }
 
-func (h *Handler) RegistrarVoto(c echo.Context) error {
+func (h *Handler) Votar(c echo.Context) error {
 
 	voto := new(model.HistoricoVoto)
 

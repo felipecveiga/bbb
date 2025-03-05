@@ -1,7 +1,7 @@
 package repository
 
 import (
-	"errors"
+	"fmt"
 
 	"github.com/felipecveiga/bbb/model"
 	"gorm.io/gorm"
@@ -18,7 +18,14 @@ func NewRepository(db *gorm.DB) *Repository {
 }
 
 func (r *Repository) CreateVotoFromDB(voto *model.HistoricoVoto) error {
-	return r.DB.Create(voto).Error
+
+	err := r.DB.Create(voto).Error
+
+	if err != nil {
+		return fmt.Errorf("erro ao salvar voto no banco de dados: %w", err)
+	}
+
+	return nil
 }
 
 func (r *Repository) StatusParticipante(idParticipante int) (*model.Participante, error) {
@@ -31,7 +38,7 @@ func (r *Repository) StatusParticipante(idParticipante int) (*model.Participante
 		First(&participante).Error
 
 	if err != nil {
-		return nil, errors.New("erro na consulta do banco de dados")
+		return nil, fmt.Errorf("erro na consulta do banco de dados %w", err)
 	}
 
 	return &participante, nil
@@ -45,13 +52,13 @@ func (r *Repository) GetAllVotosFromDB() (int64, error) {
 		Count(&votos).Error
 
 	if err != nil {
-		return 0, errors.New("erro na consulta do banco de dados")
+		return 0, fmt.Errorf("erro na consulta do banco de dados %w", err)
 	}
 
 	return votos, nil
 }
 
-func (r *Repository) VotosParticipantes(participanteId int) (int64, error) {
+func (r *Repository) GetVotosByIDFromDB(participanteId int) (int64, error) {
 
 	var votos int64
 
@@ -60,13 +67,13 @@ func (r *Repository) VotosParticipantes(participanteId int) (int64, error) {
 		Count(&votos).Error
 
 	if err != nil {
-		return 0, errors.New("erro na consulta do banco de dados")
+		return 0, fmt.Errorf("erro na consulta do banco de dados %w", err)
 	}
 
 	return votos, nil
 }
 
-func (r *Repository) GetAllVotosPorHoraFromDB() (map[string]int, error) {
+func (r *Repository) GetAllVotosHoraFromDB() (map[string]int, error) {
 
 	var resultados []struct {
 		Hora  string
@@ -80,7 +87,7 @@ func (r *Repository) GetAllVotosPorHoraFromDB() (map[string]int, error) {
 		Scan(&resultados).Error
 
 	if err != nil {
-		return nil, errors.New("erro na consulta do banco de dados")
+		return nil, fmt.Errorf("erro na consulta do banco de dados %w", err)
 	}
 
 	votosPorHora := make(map[string]int)
