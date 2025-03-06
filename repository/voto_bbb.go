@@ -97,3 +97,18 @@ func (r *Repository) GetAllVotosHoraFromDB() (map[string]int, error) {
 
 	return votosPorHora, nil
 }
+
+func (r *Repository) GetParticipanteFomDB(participanteId int) (bool, error) {
+
+	var result int64
+
+	err := r.DB.Model(&model.Participante{}).
+		Where("id =?", participanteId).
+		Count(&result).Error
+
+	if err != nil {
+		return false, fmt.Errorf("erro na consulta do banco de dados %w", err)
+	}
+
+	return result > 0, nil
+}

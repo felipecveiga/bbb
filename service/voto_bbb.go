@@ -20,6 +20,15 @@ func NewService(r *repository.Repository) *Service {
 
 func (s *Service) CreateVoto(voto *model.HistoricoVoto) error {
 
+	participanteExist, err := s.Repository.GetParticipanteFomDB(voto.IdParticipante)
+	if err != nil {
+		return fmt.Errorf("erro: ao consultar participante: %w", err)
+	}
+
+	if !participanteExist {
+		return errors.New("participante não existe")
+	}
+
 	isValido, err := s.Repository.StatusParticipante(voto.IdParticipante)
 	if err != nil {
 		return fmt.Errorf("erro: ao consultar status: %w", err)
@@ -48,6 +57,15 @@ func (s *Service) GetAllVotos() (int64, error) {
 }
 
 func (s *Service) GetVoto(participanteId int) (int64, error) {
+
+	participanteExist, err := s.Repository.GetParticipanteFomDB(participanteId)
+	if err != nil {
+		return 0, fmt.Errorf("erro: ao consultar participante: %w", err)
+	}
+
+	if !participanteExist {
+		return 0, errors.New("participante não existe")
+	}
 
 	isValido, err := s.Repository.StatusParticipante(participanteId)
 	if err != nil {
