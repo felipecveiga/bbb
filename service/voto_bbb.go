@@ -8,6 +8,13 @@ import (
 	"github.com/felipecveiga/bbb/repository"
 )
 
+type Iservice interface {
+	CreateVoto(voto *model.HistoricoVoto) error // Cria um novo voto
+	GetAllVotos() (int64, error)                // Retorna todos votos
+	GetVoto(participanteId int) (int64, error)  // Retorna voto pelo ID participante
+	GetParticipanteFomDB(id int) (bool, error)  // Consulta participante no DB
+	GetVotoHora() (map[string]int, error)       // Retorna votos por hora
+}
 type Service struct {
 	Repository *repository.Repository
 }

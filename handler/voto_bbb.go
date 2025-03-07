@@ -9,6 +9,12 @@ import (
 	"github.com/labstack/echo"
 )
 
+type IHandler interface {
+	Votar(c echo.Context) error
+	ObterTotalVotos(c echo.Context) error
+	ObterVotosPorParticipante(c echo.Context) error
+	ObterVotosPorHora(c echo.Context) error
+}
 type Handler struct {
 	Service *service.Service
 }

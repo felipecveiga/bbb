@@ -7,6 +7,15 @@ import (
 	"gorm.io/gorm"
 )
 
+type IRepository interface {
+	CreateVotoFromDB(voto *model.HistoricoVoto) error                   // Registra o voto no BD
+	StatusParticipante(idParticipante int) (*model.Participante, error) // Verifica o status do participante
+	GetAllVotosFromDB() (int64, error)                                  // Retorna todos os votos
+	GetVotosByIDFromDB(participanteId int) (int64, error)               // Retorna os votos pelo ID
+	GetAllVotosHoraFromDB() (map[string]int, error)                     // Retorna os votos por hora
+	GetParticipanteFomDB(participanteId int) (bool, error)              // Verifica se o participante existe.
+}
+
 type Repository struct {
 	DB gorm.DB
 }
