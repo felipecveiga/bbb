@@ -15,6 +15,7 @@ type IHandler interface {
 	ObterVotosPorParticipante(c echo.Context) error
 	ObterVotosPorHora(c echo.Context) error
 }
+
 type Handler struct {
 	Service *service.Service
 }

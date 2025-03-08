@@ -15,6 +15,7 @@ type Iservice interface {
 	GetParticipanteFomDB(id int) (bool, error)  // Consulta participante no DB
 	GetVotoHora() (map[string]int, error)       // Retorna votos por hora
 }
+
 type Service struct {
 	Repository *repository.Repository
 }
