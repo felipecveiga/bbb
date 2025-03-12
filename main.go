@@ -15,10 +15,10 @@ func main() {
 	HandlerHistoricoVoto := handler.NewHandler(ServiceHistoricoVoto)
 
 	e := echo.New()
-	e.POST("/votar", HandlerHistoricoVoto.Votar)
-	e.GET("/votos/:id", HandlerHistoricoVoto.ObterVotosPorParticipante)
-	e.GET("/votos", HandlerHistoricoVoto.ObterTotalVotos)
-	e.GET("/votos/hora", HandlerHistoricoVoto.ObterVotosPorHora)
+	e.POST("/votar", HandlerHistoricoVoto.Vote)
+	e.GET("/votos/:id", HandlerHistoricoVoto.GetParticipantVotes)
+	e.GET("/votos", HandlerHistoricoVoto.GetTotalVotes)
+	e.GET("/votos/hora", HandlerHistoricoVoto.GetVotesHour)
 
 	e.Logger.Fatal(e.Start(":8080"))
 }

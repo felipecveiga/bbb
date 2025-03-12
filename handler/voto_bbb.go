@@ -26,61 +26,61 @@ func NewHandler(s *service.Service) *Handler {
 	}
 }
 
-func (h *Handler) Votar(c echo.Context) error {
+func (h *Handler) Vote(c echo.Context) error {
 
-	voto := new(model.HistoricoVoto)
+	vote := new(model.HistoricoVoto)
 
-	if err := c.Bind(voto); err != nil {
+	if err := c.Bind(vote); err != nil {
 		return c.JSON(http.StatusBadRequest, map[string]string{"error": err.Error()})
 	}
 
-	if voto.IdParticipante == 0 {
+	if vote.IdParticipante == 0 {
 		return c.JSON(http.StatusBadRequest, map[string]string{"error": "id participante inválido"})
 	}
 
-	err := h.Service.CreateVoto(voto)
+	err := h.Service.CreateVote(vote)
 	if err != nil {
 		return c.JSON(http.StatusInternalServerError, map[string]string{"error": err.Error()})
 	}
 
-	return c.JSON(http.StatusOK, voto)
+	return c.JSON(http.StatusOK, vote)
 }
 
-func (h *Handler) ObterTotalVotos(c echo.Context) error {
+func (h *Handler) GetTotalVotes(c echo.Context) error {
 
-	votos, err := h.Service.GetAllVotos()
+	votes, err := h.Service.GetAllVotes()
 	if err != nil {
 		return c.JSON(http.StatusInternalServerError, map[string]string{"error": err.Error()})
 	}
 
-	return c.JSON(http.StatusOK, votos)
+	return c.JSON(http.StatusOK, votes)
 }
 
-func (h *Handler) ObterVotosPorParticipante(c echo.Context) error {
+func (h *Handler) GetParticipantVotes(c echo.Context) error {
 
-	participanteId, err := strconv.Atoi(c.Param("id"))
+	participantId, err := strconv.Atoi(c.Param("id"))
 	if err != nil {
 		return c.JSON(http.StatusBadRequest, map[string]string{"error": "id inválido"})
 	}
 
-	if participanteId <= 0 {
+	if participantId <= 0 {
 		return c.JSON(http.StatusBadRequest, map[string]string{"error": "id participante inválido"})
 	}
 
-	votosParticipantes, err := h.Service.GetVoto(participanteId)
+	votesParticipants, err := h.Service.GetVote(participantId)
 	if err != nil {
 		return c.JSON(http.StatusInternalServerError, map[string]string{"error": err.Error()})
 	}
 
-	return c.JSON(http.StatusOK, votosParticipantes)
+	return c.JSON(http.StatusOK, votesParticipants)
 }
 
-func (h *Handler) ObterVotosPorHora(c echo.Context) error {
+func (h *Handler) GetVotesHour(c echo.Context) error {
 
-	votos, err := h.Service.GetVotoHora()
+	votes, err := h.Service.GetVoteHour()
 	if err != nil {
 		return c.JSON(http.StatusInternalServerError, map[string]string{"error": err.Error()})
 	}
 
-	return c.JSON(http.StatusOK, votos)
+	return c.JSON(http.StatusOK, votes)
 }
