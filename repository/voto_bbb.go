@@ -7,26 +7,26 @@ import (
 	"gorm.io/gorm"
 )
 
-type IRepository interface {
-	CreateVoteFromDB(voto *model.HistoricoVoto) error                   // Registra o voto no BD
-	StatusParticipante(idParticipante int) (*model.Participante, error) // Verifica o status do participante
-	GetAllVotosFromDB() (int64, error)                                  // Retorna todos os votos
-	GetVotosByIDFromDB(participanteId int) (int64, error)               // Retorna os votos pelo ID
-	GetAllVotosHoraFromDB() (map[string]int, error)                     // Retorna os votos por hora
-	GetParticipanteFomDB(participanteId int) (bool, error)              // Verifica se o participante existe.
+type Repository interface {
+	CreateVoteFromDB(vote *model.HistoricoVoto) error                          // Registra o voto no BD
+	GetParticipantStatusFromDB(idParticipant int) (*model.Participante, error) // Verifica o status do participante
+	GetAllVotesFromDB() (int64, error)                                         // Retorna todos os votos
+	GetVotesByIdFromDB(participantId int) (int64, error)                       // Retorna os votos pelo ID
+	GetAllVotesHourFromDB() (map[string]int, error)                            // Retorna os votos por hora
+	GetParticipantFomDB(participantId int) (bool, error)                       // Verifica se o participante existe.
 }
 
-type Repository struct {
+type repository struct {
 	DB gorm.DB
 }
 
-func NewRepository(db *gorm.DB) *Repository {
-	return &Repository{
+func NewRepository(db *gorm.DB) Repository {
+	return &repository{
 		DB: *db,
 	}
 }
 
-func (r *Repository) CreateVoteFromDB(vote *model.HistoricoVoto) error {
+func (r *repository) CreateVoteFromDB(vote *model.HistoricoVoto) error {
 
 	err := r.DB.Create(vote).Error
 
@@ -37,7 +37,7 @@ func (r *Repository) CreateVoteFromDB(vote *model.HistoricoVoto) error {
 	return nil
 }
 
-func (r *Repository) GetParticipantStatusFromDB(idParticipant int) (*model.Participante, error) {
+func (r *repository) GetParticipantStatusFromDB(idParticipant int) (*model.Participante, error) {
 
 	var participant model.Participante
 
@@ -53,7 +53,7 @@ func (r *Repository) GetParticipantStatusFromDB(idParticipant int) (*model.Parti
 	return &participant, nil
 }
 
-func (r *Repository) GetAllVotesFromDB() (int64, error) {
+func (r *repository) GetAllVotesFromDB() (int64, error) {
 
 	var votes int64
 
@@ -67,7 +67,7 @@ func (r *Repository) GetAllVotesFromDB() (int64, error) {
 	return votes, nil
 }
 
-func (r *Repository) GetVotesByIdFromDB(participantId int) (int64, error) {
+func (r *repository) GetVotesByIdFromDB(participantId int) (int64, error) {
 
 	var votes int64
 
@@ -82,7 +82,7 @@ func (r *Repository) GetVotesByIdFromDB(participantId int) (int64, error) {
 	return votes, nil
 }
 
-func (r *Repository) GetAllVotesHourFromDB() (map[string]int, error) {
+func (r *repository) GetAllVotesHourFromDB() (map[string]int, error) {
 
 	var totalVotesHour []struct {
 		Hora  string
@@ -107,7 +107,7 @@ func (r *Repository) GetAllVotesHourFromDB() (map[string]int, error) {
 	return votesHour, nil
 }
 
-func (r *Repository) GetParticipantFomDB(participantId int) (bool, error) {
+func (r *repository) GetParticipantFomDB(participantId int) (bool, error) {
 
 	var result int64
 

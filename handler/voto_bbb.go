@@ -9,24 +9,24 @@ import (
 	"github.com/labstack/echo"
 )
 
-type IHandler interface {
-	Votar(c echo.Context) error
-	ObterTotalVotos(c echo.Context) error
-	ObterVotosPorParticipante(c echo.Context) error
-	ObterVotosPorHora(c echo.Context) error
+type Handler interface {
+	Vote(c echo.Context) error
+	GetTotalVotes(c echo.Context) error
+	GetParticipantVotes(c echo.Context) error
+	GetVotesHour(c echo.Context) error
 }
 
-type Handler struct {
-	Service *service.Service
+type handler struct {
+	Service service.Service
 }
 
-func NewHandler(s *service.Service) *Handler {
-	return &Handler{
+func NewHandler(s service.Service) Handler {
+	return &handler{
 		Service: s,
 	}
 }
 
-func (h *Handler) Vote(c echo.Context) error {
+func (h *handler) Vote(c echo.Context) error {
 
 	vote := new(model.HistoricoVoto)
 
@@ -46,7 +46,7 @@ func (h *Handler) Vote(c echo.Context) error {
 	return c.JSON(http.StatusOK, vote)
 }
 
-func (h *Handler) GetTotalVotes(c echo.Context) error {
+func (h *handler) GetTotalVotes(c echo.Context) error {
 
 	votes, err := h.Service.GetAllVotes()
 	if err != nil {
@@ -56,7 +56,7 @@ func (h *Handler) GetTotalVotes(c echo.Context) error {
 	return c.JSON(http.StatusOK, votes)
 }
 
-func (h *Handler) GetParticipantVotes(c echo.Context) error {
+func (h *handler) GetParticipantVotes(c echo.Context) error {
 
 	participantId, err := strconv.Atoi(c.Param("id"))
 	if err != nil {
@@ -75,7 +75,7 @@ func (h *Handler) GetParticipantVotes(c echo.Context) error {
 	return c.JSON(http.StatusOK, votesParticipants)
 }
 
-func (h *Handler) GetVotesHour(c echo.Context) error {
+func (h *handler) GetVotesHour(c echo.Context) error {
 
 	votes, err := h.Service.GetVoteHour()
 	if err != nil {

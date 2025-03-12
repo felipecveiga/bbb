@@ -8,24 +8,24 @@ import (
 	"github.com/felipecveiga/bbb/repository"
 )
 
-type Iservice interface {
+type Service interface {
 	CreateVote(voto *model.HistoricoVoto) error // Cria um novo voto
 	GetAllVotes() (int64, error)                // Retorna todos votos
 	GetVote(participanteId int) (int64, error)  // Retorna voto pelo ID participante
 	GetVoteHour() (map[string]int, error)       // Retorna votos por hora
 }
 
-type Service struct {
-	Repository *repository.Repository
+type service struct {
+	Repository repository.Repository
 }
 
-func NewService(r *repository.Repository) *Service {
-	return &Service{
+func NewService(r repository.Repository) Service {
+	return &service{
 		Repository: r,
 	}
 }
 
-func (s *Service) CreateVote(vote *model.HistoricoVoto) error {
+func (s *service) CreateVote(vote *model.HistoricoVoto) error {
 
 	participantExist, err := s.Repository.GetParticipantFomDB(vote.IdParticipante)
 	if err != nil {
@@ -53,7 +53,7 @@ func (s *Service) CreateVote(vote *model.HistoricoVoto) error {
 	return nil
 }
 
-func (s *Service) GetAllVotes() (int64, error) {
+func (s *service) GetAllVotes() (int64, error) {
 
 	totalVotes, err := s.Repository.GetAllVotesFromDB()
 	if err != nil {
@@ -63,7 +63,7 @@ func (s *Service) GetAllVotes() (int64, error) {
 	return totalVotes, nil
 }
 
-func (s *Service) GetVote(participantId int) (int64, error) {
+func (s *service) GetVote(participantId int) (int64, error) {
 
 	participantExist, err := s.Repository.GetParticipantFomDB(participantId)
 	if err != nil {
@@ -91,7 +91,7 @@ func (s *Service) GetVote(participantId int) (int64, error) {
 	return votesParticipants, nil
 }
 
-func (s *Service) GetVoteHour() (map[string]int, error) {
+func (s *service) GetVoteHour() (map[string]int, error) {
 
 	votesHour, err := s.Repository.GetAllVotesHourFromDB()
 	if err != nil {
