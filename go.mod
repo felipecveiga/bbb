@@ -1,11 +1,13 @@
 module github.com/felipecveiga/bbb
 
-go 1.21.3
+go 1.22
+
+toolchain go1.24.1
 
 require (
-	github.com/golang/mock v1.6.0
 	github.com/joho/godotenv v1.5.1
 	github.com/labstack/echo v3.3.10+incompatible
+	go.uber.org/mock v0.5.0
 	gorm.io/driver/mysql v1.5.7
 	gorm.io/gorm v1.25.12
 )
