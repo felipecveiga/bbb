@@ -8,7 +8,7 @@ import (
 	"github.com/felipecveiga/bbb/service"
 	"github.com/labstack/echo"
 )
-
+//go:generate mockgen -source=./voto_bbb.go -destination=./voto_bbb_mock.go -package=handler
 type Handler interface {
 	Vote(c echo.Context) error
 	GetTotalVotes(c echo.Context) error

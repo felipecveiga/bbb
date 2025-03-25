@@ -8,6 +8,7 @@ import (
 	"github.com/felipecveiga/bbb/repository"
 )
 
+//go:generate mockgen -source=./voto_bbb.go -destination=./voto_bbb_mock.go -package=service
 type Service interface {
 	CreateVote(voto *model.HistoricoVoto) error // Cria um novo voto
 	GetAllVotes() (int64, error)                // Retorna todos votos

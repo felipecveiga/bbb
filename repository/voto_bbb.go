@@ -7,6 +7,7 @@ import (
 	"gorm.io/gorm"
 )
 
+//go:generate mockgen -source=./voto_bbb.go -destination=./voto_bbb_mock.go -package=repository
 type Repository interface {
 	CreateVoteFromDB(vote *model.HistoricoVoto) error                          // Registra o voto no BD
 	GetParticipantStatusFromDB(idParticipant int) (*model.Participante, error) // Verifica o status do participante
