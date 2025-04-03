@@ -11,19 +11,21 @@ import (
 	"go.uber.org/mock/gomock"
 )
 
-func TestCreateVote_WhenReturnSucess(t *testing.T) {
-	ctrl := gomock.NewController(t)
+var (
+	now = time.Now()
 
-	mock := NewMockService(ctrl)
-
-	now := time.Now()
-
-	vote := &model.HistoricoVoto{
+	vote = &model.HistoricoVoto{
 		ID:             1,
 		IdParticipante: 2,
 		Ip:             "",
 		Created_at:     now,
 	}
+)
+
+func TestCreateVote_WhenReturnSucess(t *testing.T) {
+
+	ctrl := gomock.NewController(t)
+	mock := NewMockService(ctrl)
 
 	mock.EXPECT().
 		CreateVote(vote).
@@ -35,18 +37,10 @@ func TestCreateVote_WhenReturnSucess(t *testing.T) {
 }
 
 func TestCreateVote_WhenConsultingParticipant_ReturnError(t *testing.T) {
+
 	ctrl := gomock.NewController(t)
 	mockRepo := repository.NewMockRepository(ctrl)
 	service := NewService(mockRepo)
-
-	now := time.Now()
-
-	vote := &model.HistoricoVoto{
-		ID:             1,
-		IdParticipante: 2,
-		Ip:             "",
-		Created_at:     now,
-	}
 
 	mockRepo.EXPECT().
 		GetParticipantFomDB(vote.IdParticipante).
@@ -58,24 +52,16 @@ func TestCreateVote_WhenConsultingParticipant_ReturnError(t *testing.T) {
 }
 
 func TestCreateVote_WhenConsultingStatusParticipant_ReturnError(t *testing.T) {
+
 	ctrl := gomock.NewController(t)
 	mockRepo := repository.NewMockRepository(ctrl)
 	service := NewService(mockRepo)
-
-	now := time.Now()
-
-	vote := &model.HistoricoVoto{
-		ID:             1,
-		IdParticipante: 2,
-		Ip:             "",
-		Created_at:     now,
-	}
 
 	mockRepo.EXPECT().
 		GetParticipantFomDB(vote.IdParticipante).
 		Return(true, nil)
 	mockRepo.EXPECT().
-	GetParticipantStatusFromDB(vote.IdParticipante).
+		GetParticipantStatusFromDB(vote.IdParticipante).
 		Return(nil, errors.New("erro: ao consultar status"))
 
 	err := service.CreateVote(vote)
@@ -84,24 +70,44 @@ func TestCreateVote_WhenConsultingStatusParticipant_ReturnError(t *testing.T) {
 }
 
 func TestCreateVote_WhenReturnError(t *testing.T) {
+
 	ctrl := gomock.NewController(t)
-
 	mock := NewMockService(ctrl)
-
-	now := time.Now()
-
-	vote := &model.HistoricoVoto{
-		ID:             1,
-		IdParticipante: 2,
-		Ip:             "",
-		Created_at:     now,
-	}
 
 	mock.EXPECT().
 		CreateVote(vote).
 		Return(errors.New("erro ao registrar voto"))
 
 	err := mock.CreateVote(vote)
+
+	assert.Error(t, err)
+}
+
+func TestGetAllVotes_WhenReturnSucess(t *testing.T) {
+
+	ctrl := gomock.NewController(t)
+	mock := NewMockService(ctrl)
+
+	mock.EXPECT().
+		GetAllVotes().
+		Return(int64(10), nil)
+
+	votes, err := mock.GetAllVotes()
+
+	assert.NoError(t, err)
+	assert.Equal(t, int64(10), votes)
+}
+
+func TestGetAllVotes_WhenReturnError(t *testing.T) {
+	ctrl := gomock.NewController(t)
+	mockRepo := repository.NewMockRepository(ctrl)
+	service := NewService(mockRepo)
+
+	mockRepo.EXPECT().
+		GetAllVotesFromDB().
+		Return(int64(0), errors.New("Erro ao consultar todos os votos"))
+
+	_, err := service.GetAllVotes()
 
 	assert.Error(t, err)
 }
