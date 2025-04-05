@@ -10,10 +10,10 @@ import (
 
 //go:generate mockgen -source=./voto_bbb.go -destination=./voto_bbb_mock.go -package=service
 type Service interface {
-	CreateVote(voto *model.HistoricoVoto) error // Cria um novo voto
-	GetAllVotes() (int64, error)                // Retorna todos votos
-	GetVote(participanteId int) (int64, error)  // Retorna voto pelo ID participante
-	GetVoteHour() (map[string]int, error)       // Retorna votos por hora
+	CreateVote(voto *model.HistoricoVoto) error 
+	GetAllVotes() (int64, error)                
+	GetVote(participanteId int) (int64, error)  
+	GetVoteHour() (map[string]int, error)      
 }
 
 type service struct {

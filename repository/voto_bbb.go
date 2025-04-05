@@ -9,12 +9,12 @@ import (
 
 //go:generate mockgen -source=./voto_bbb.go -destination=./voto_bbb_mock.go -package=repository
 type Repository interface {
-	CreateVoteFromDB(vote *model.HistoricoVoto) error                          // Registra o voto no BD
-	GetParticipantStatusFromDB(idParticipant int) (*model.Participante, error) // Verifica o status do participante
-	GetAllVotesFromDB() (int64, error)                                         // Retorna todos os votos
-	GetVotesByIdFromDB(participantId int) (int64, error)                       // Retorna os votos pelo ID
-	GetAllVotesHourFromDB() (map[string]int, error)                            // Retorna os votos por hora
-	GetParticipantFomDB(participantId int) (bool, error)                       // Verifica se o participante existe.
+	CreateVoteFromDB(vote *model.HistoricoVoto) error                          
+	GetParticipantStatusFromDB(idParticipant int) (*model.Participante, error)
+	GetAllVotesFromDB() (int64, error)                                         
+	GetVotesByIdFromDB(participantId int) (int64, error)                       
+	GetAllVotesHourFromDB() (map[string]int, error)                            
+	GetParticipantFomDB(participantId int) (bool, error)                       
 }
 
 type repository struct {
