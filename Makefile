@@ -10,6 +10,11 @@ setup:
 	@go get github.com/labstack/echo
 	@go get github.com/joho/godotenv
 	@go install go.uber.org/mock/mockgen@latest
+	@go get github.com/DATA-DOG/go-sqlmock
 
 mock-generate:
 	@go generate ./...
+
+test:
+	@go test -v ./service
+	
