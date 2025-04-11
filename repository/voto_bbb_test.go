@@ -65,11 +65,9 @@ func TestCreateVoteFromDB_WhenReturnSucess(t *testing.T) {
 	expectedSQL := "INSERT INTO `historico_votos` (`id_participante`,`ip`,`created_at`,`id`) VALUES (?,?,?,?)"
 
 	mock.ExpectBegin()
-
 	mock.ExpectExec(expectedSQL).
 		WithArgs(vote.IdParticipante, vote.Ip, sqlmock.AnyArg(), vote.ID).
 		WillReturnResult(sqlmock.NewResult(1, 1))
-
 	mock.ExpectCommit()
 
 	err := repository.VotoRepository.CreateVoteFromDB(vote)
@@ -96,8 +94,9 @@ func TestGetParticipantStatusFromDB_WhenReturnSucess(t *testing.T) {
 	repository, mock, db := getMockRepository()
 	defer db.Close()
 
-	expectedSQL := "SELECT `status` FROM `participantes` WHERE id = ? ORDER BY `participantes`.`id` LIMIT ?"
+	
 	rows := []string{"status"}
+	expectedSQL := "SELECT `status` FROM `participantes` WHERE id = ? ORDER BY `participantes`.`id` LIMIT ?"
 
 	mock.ExpectQuery(expectedSQL).
 		WithArgs(participante.ID, 1).
@@ -131,8 +130,8 @@ func TestGetAllVotesFromDB_WhenReturnSucess(t *testing.T) {
 	defer db.Close()
 
 	rows := sqlmock.NewRows([]string{"count"}).AddRow(4)
-
 	expectedSQL := "SELECT count(*) FROM `historico_votos`"
+
 	mock.ExpectQuery(expectedSQL).
 		WillReturnRows(rows)
 
@@ -147,10 +146,43 @@ func TestGetAllVotesFromDB_WhenReturnError(t *testing.T) {
 	defer db.Close()
 
 	expectedSQL := "SELECT count(*) FROM `historico_votos`"
+
 	mock.ExpectQuery(expectedSQL).
 		WillReturnError(errors.New("some error"))
 
 	_, err := repository.VotoRepository.GetAllVotesFromDB()
+
+	assert.Error(t, err)
+}
+
+func TestGetVotesByIdFromDB_WhenReturnSucess(t *testing.T) {
+	repository, mock, db := getMockRepository()
+	defer db.Close()
+
+	rows := sqlmock.NewRows([]string{"count"}).AddRow(4)
+	expectedSQL := "SELECT count(*) FROM `historico_votos` WHERE id_participante =?"
+
+	mock.ExpectQuery(expectedSQL).
+		WithArgs(participante.ID).
+		WillReturnRows(rows)
+
+	result, err := repository.VotoRepository.GetVotesByIdFromDB(participante.ID)
+
+	assert.NoError(t, err)
+	assert.Equal(t, int64(4), result)
+}
+
+func TestGetVotesByIdFromDB_WhenReturnError(t *testing.T) {
+	repository, mock, db := getMockRepository()
+	defer db.Close()
+
+	expectedSQL := "SELECT count(*) FROM `historico_votos` WHERE id_participante =?"
+	
+	mock.ExpectQuery(expectedSQL).
+		WithArgs(participante.ID).
+		WillReturnError(errors.New("some error"))
+
+	_, err := repository.VotoRepository.GetVotesByIdFromDB(participante.ID)
 
 	assert.Error(t, err)
 }
