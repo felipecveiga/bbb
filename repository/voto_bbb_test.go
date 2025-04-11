@@ -220,3 +220,35 @@ func TestGetAllVotesHourFromDB_WhenReturnError(t *testing.T) {
 
 	assert.Error(t, err)
 }
+
+func TestGetParticipantFomDB_WhenReturnSucess(t *testing.T) {
+	repository, mock, db := getMockRepository()
+	defer db.Close()
+
+	rows := sqlmock.NewRows([]string{"count"}).AddRow(1)
+	expectedSQL := "SELECT count(*) FROM `participantes` WHERE id =?"
+
+	mock.ExpectQuery(expectedSQL).
+		WithArgs(participante.ID).
+		WillReturnRows(rows)
+
+	result, err := repository.VotoRepository.GetParticipantFomDB(participante.ID)
+
+	assert.NoError(t, err)
+	assert.Equal(t, true, result)
+}
+
+func TestGetParticipantFomDB_WhenReturnError(t *testing.T) {
+	repository, mock, db := getMockRepository()
+	defer db.Close()
+
+	expectedSQL := "SELECT count(*) FROM `participantes` WHERE id =?"
+
+	mock.ExpectQuery(expectedSQL).
+		WithArgs(participante.ID).
+		WillReturnError(errors.New("some error"))
+
+	_, err := repository.VotoRepository.GetParticipantFomDB(participante.ID)
+
+	assert.Error(t, err)
+}
