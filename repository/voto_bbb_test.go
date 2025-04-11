@@ -94,7 +94,6 @@ func TestGetParticipantStatusFromDB_WhenReturnSucess(t *testing.T) {
 	repository, mock, db := getMockRepository()
 	defer db.Close()
 
-	
 	rows := []string{"status"}
 	expectedSQL := "SELECT `status` FROM `participantes` WHERE id = ? ORDER BY `participantes`.`id` LIMIT ?"
 
@@ -177,12 +176,47 @@ func TestGetVotesByIdFromDB_WhenReturnError(t *testing.T) {
 	defer db.Close()
 
 	expectedSQL := "SELECT count(*) FROM `historico_votos` WHERE id_participante =?"
-	
+
 	mock.ExpectQuery(expectedSQL).
 		WithArgs(participante.ID).
 		WillReturnError(errors.New("some error"))
 
 	_, err := repository.VotoRepository.GetVotesByIdFromDB(participante.ID)
+
+	assert.Error(t, err)
+}
+
+func TestGetAllVotesHourFromDB_WhenReturnSucess(t *testing.T) {
+	repository, mock, db := getMockRepository()
+	defer db.Close()
+
+	rows := sqlmock.NewRows([]string{"hora", "total"}).
+		AddRow("20-10-2025", 4).
+		AddRow("21-11-2025", 11)
+	expectedSQL := "SELECT DATE_FORMAT(created_at, '%d-%m-%Y %H:00:00') as hora, COUNT(*) as total FROM `historico_votos` GROUP BY `hora` ORDER BY hora ASC"
+
+	mock.ExpectQuery(expectedSQL).
+		WillReturnRows(rows)
+
+	result, err := repository.VotoRepository.GetAllVotesHourFromDB()
+
+	assert.NoError(t, err)
+	assert.Equal(t, map[string]int{
+		"20-10-2025": 4,
+		"21-11-2025": 11,
+	}, result)
+}
+
+func TestGetAllVotesHourFromDB_WhenReturnError(t *testing.T) {
+	repository, mock, db := getMockRepository()
+	defer db.Close()
+
+	expectedSQL := "SELECT DATE_FORMAT(created_at, '%d-%m-%Y %H:00:00') as hora, COUNT(*) as total FROM `historico_votos` GROUP BY `hora` ORDER BY hora ASC"
+
+	mock.ExpectQuery(expectedSQL).
+		WillReturnError(errors.New("some error"))
+
+	_, err := repository.VotoRepository.GetAllVotesHourFromDB()
 
 	assert.Error(t, err)
 }
