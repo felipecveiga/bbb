@@ -123,3 +123,43 @@ func TestVote_WhenServiceReturnError(t *testing.T) {
 	assert.NoError(t, err)
 	assert.Equal(t, http.StatusInternalServerError, mocks.Recorder.Code)
 }
+
+func TestGetTotalVotes_WhenReturnSucess(t *testing.T) {
+	ctrl := gomock.NewController(t)
+	defer ctrl.Finish()
+
+	mockService := service.NewMockService(ctrl)
+
+	url := "/votos"
+
+	mocks := SetupMockHandler(url, http.MethodGet, nil, mockService)
+
+	mockService.EXPECT().
+		GetAllVotes().
+		Return(int64(10), nil)
+
+	err := mocks.Handler.GetTotalVotes(mocks.Ctx)
+
+	assert.NoError(t, err)
+	assert.Equal(t, http.StatusOK, mocks.Recorder.Code)
+}
+
+func TestGetTotalVotes_WhenReturnError(t *testing.T) {
+	ctrl := gomock.NewController(t)
+	defer ctrl.Finish()
+
+	mockService := service.NewMockService(ctrl)
+
+	url := "/votos"
+
+	mocks := SetupMockHandler(url, http.MethodGet, nil, mockService)
+
+	mockService.EXPECT().
+		GetAllVotes().
+		Return(int64(0), errors.New("some error"))
+
+	err := mocks.Handler.GetTotalVotes(mocks.Ctx)
+
+	assert.NoError(t, err)
+	assert.Equal(t, http.StatusInternalServerError, mocks.Recorder.Code)
+}
