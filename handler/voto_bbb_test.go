@@ -163,3 +163,85 @@ func TestGetTotalVotes_WhenReturnError(t *testing.T) {
 	assert.NoError(t, err)
 	assert.Equal(t, http.StatusInternalServerError, mocks.Recorder.Code)
 }
+
+func TestGetParticipantVotes_WhenReturnSucess(t *testing.T) {
+	ctrl := gomock.NewController(t)
+	defer ctrl.Finish()
+
+	mockService := service.NewMockService(ctrl)
+
+	url := "/votos/1"
+
+	mocks := SetupMockHandler(url, http.MethodGet, nil, mockService)
+	mocks.Ctx.SetParamNames("id")
+	mocks.Ctx.SetParamValues("1")
+
+	mockService.EXPECT().
+		GetVote(1).
+		Return(int64(30), nil)
+
+	err := mocks.Handler.GetParticipantVotes(mocks.Ctx)
+
+	assert.NoError(t, err)
+	assert.Equal(t, http.StatusOK, mocks.Recorder.Code)
+}
+
+func TestGetParticipantVotes_WhenInvalidIDReturnError(t *testing.T) {
+	ctrl := gomock.NewController(t)
+	defer ctrl.Finish()
+
+	mockService := service.NewMockService(ctrl)
+
+	url := "/votos/1"
+
+	mocks := SetupMockHandler(url, http.MethodGet, nil, mockService)
+	mocks.Ctx.SetParamNames("id")
+	mocks.Ctx.SetParamValues("a")
+
+	err := mocks.Handler.GetParticipantVotes(mocks.Ctx)
+
+	assert.NoError(t, err)
+	assert.Equal(t, http.StatusBadRequest, mocks.Recorder.Code)
+	assert.Contains(t, mocks.Recorder.Body.String(), "id inválido")
+}
+
+func TestGetParticipantVotes_WhenIDLessThanOrZeroReturnError(t *testing.T) {
+	ctrl := gomock.NewController(t)
+	defer ctrl.Finish()
+
+	mockService := service.NewMockService(ctrl)
+
+	url := "/votos/1"
+
+	mocks := SetupMockHandler(url, http.MethodGet, nil, mockService)
+	mocks.Ctx.SetParamNames("id")
+	mocks.Ctx.SetParamValues("0")
+
+	err := mocks.Handler.GetParticipantVotes(mocks.Ctx)
+
+	assert.NoError(t, err)
+	assert.Equal(t, http.StatusBadRequest, mocks.Recorder.Code)
+	assert.Contains(t, mocks.Recorder.Body.String(), "id participante inválido")
+}
+
+func TestGetParticipantVotes_WhenServiceReturnError(t *testing.T) {
+	ctrl := gomock.NewController(t)
+	defer ctrl.Finish()
+
+	mockService := service.NewMockService(ctrl)
+
+	url := "/votos/1"
+
+	mocks := SetupMockHandler(url, http.MethodGet, nil, mockService)
+	mocks.Ctx.SetParamNames("id")
+	mocks.Ctx.SetParamValues("1")
+
+	mockService.EXPECT().
+		GetVote(1).
+		Return(int64(0), errors.New("some error"))
+
+	err := mocks.Handler.GetParticipantVotes(mocks.Ctx)
+
+	assert.NoError(t, err)
+	assert.Equal(t, http.StatusInternalServerError, mocks.Recorder.Code)
+}
