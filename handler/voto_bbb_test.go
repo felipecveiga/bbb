@@ -245,3 +245,47 @@ func TestGetParticipantVotes_WhenServiceReturnError(t *testing.T) {
 	assert.NoError(t, err)
 	assert.Equal(t, http.StatusInternalServerError, mocks.Recorder.Code)
 }
+
+func TestGetVotesHour_WhenReturnSucess(t *testing.T) {
+	ctrl := gomock.NewController(t)
+	defer ctrl.Finish()
+
+	mockService := service.NewMockService(ctrl)
+
+	url := "/votos/hora"
+
+	mocks := SetupMockHandler(url, http.MethodGet, nil, mockService)
+
+	mockService.EXPECT().
+		GetVoteHour().
+		Return(map[string]int{
+			"2023-10-01 00:00": 10,
+			"2023-10-01 01:00": 20,
+			"2023-10-01 02:00": 30,
+		}, nil)
+
+	err := mocks.Handler.GetVotesHour(mocks.Ctx)
+
+	assert.NoError(t, err)
+	assert.Equal(t, http.StatusOK, mocks.Recorder.Code)
+}
+
+func TestGetVotesHour_WhenReturnError(t *testing.T) {
+	ctrl := gomock.NewController(t)
+	defer ctrl.Finish()
+
+	mockService := service.NewMockService(ctrl)
+
+	url := "/votos/hora"
+
+	mocks := SetupMockHandler(url, http.MethodGet, nil, mockService)
+
+	mockService.EXPECT().
+		GetVoteHour().
+		Return(nil, errors.New("some error"))
+
+	err := mocks.Handler.GetVotesHour(mocks.Ctx)
+
+	assert.NoError(t, err)
+	assert.Equal(t, http.StatusInternalServerError, mocks.Recorder.Code)
+}
